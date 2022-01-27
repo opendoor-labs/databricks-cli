@@ -24,6 +24,7 @@
 # limitations under the License.
 #
 import os
+import io
 
 
 class JobsService(object):
@@ -86,6 +87,7 @@ class JobsService(object):
 
     def submit_run(self, run_name=None, existing_cluster_id=None, new_cluster=None, libraries=None,
                    notebook_task=None, spark_jar_task=None, spark_python_task=None,
+                   access_control_list=None,
                    spark_submit_task=None, timeout_seconds=None, tasks=None, headers=None, version=None):
         _data = {}
         if run_name is not None:
@@ -116,6 +118,8 @@ class JobsService(object):
                 raise TypeError('Expected databricks.SparkSubmitTask() or dict for field spark_submit_task')
         if timeout_seconds is not None:
             _data['timeout_seconds'] = timeout_seconds
+        if access_control_list is not None:
+            _data['access_control_list'] = access_control_list
         if tasks is not None:
             _data['tasks'] = tasks
         return self.client.perform_query('POST', '/jobs/runs/submit', data=_data, headers=headers, version=version)
@@ -549,6 +553,23 @@ class DbfsService(object):
             filename = os.path.basename(src_path)
             _files = {'file': (filename, open(src_path, 'rb'), 'multipart/form-data')}
         return self.client.perform_query('POST', '/dbfs/put', data=_data, headers=headers, files=_files)
+
+
+    def put_string(self, path, contents, overwrite=None, headers=None):
+        _data = {}
+        _files = None
+        if path is not None:
+            _data['path'] = path
+        if overwrite is not None:
+            _data['overwrite'] = overwrite
+        if headers is not None:
+            headers = {'Content-Type': None, **headers}
+        else:
+            headers = {'Content-Type': None}
+        filename = os.path.basename(path)
+        _files = {'file': (filename, io.StringIO(contents), 'multipart/form-data')}
+        return self.client.perform_query('POST', '/dbfs/put', data=_data, headers=headers, files=_files)
+
 
     def put_test(self, path, contents=None, overwrite=None, headers=None, src_path=None):
         _data = {}

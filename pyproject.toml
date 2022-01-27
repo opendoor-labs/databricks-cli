@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "databricks-cli"
+version = "0.16"
+description = "databricks/databricks-cli"
+authors = ["Scott Pollack <scott.pollack@opendoor.com>"]
+license = "Apache 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+click = ">=6.7"
+requests = ">=2.17.3"
+tabulate = ">=0.7.7"
+six = ">=1.10.0"
+toml = "^0.10.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
